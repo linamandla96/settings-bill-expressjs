@@ -1,12 +1,11 @@
 module.exports = function SettingsBill() {
-
+const moment = require('moment');
     let smsCost;
     let callCost;
     let warningLevel;
     let criticalLevel;
-
     let actionList = [];
-
+     let momentList = [];
     function setSettings(settings) {
         smsCost = Number(settings.smsCost);
         callCost = Number(settings.callCost);
@@ -25,32 +24,52 @@ module.exports = function SettingsBill() {
     }
 
     function recordAction(action) {
-
         let cost = 0;
-        if (action === 'sms' && !hasReachedCriticalLevel()) {
-            cost = smsCost;
-        }
-        else if (action === 'call' && !hasReachedCriticalLevel()) {
-            cost = callCost;
-        }
 
-        actionList.push({
-            type: action,
-            cost,
-            timestamp: new Date()
-        });
+        if (grandTotal() < criticalLevel) {
+            if (action === "call") {
+                cost = callCost;
+    
+            } else if (action === "sms") {
+                cost = smsCost;
+    
+            }
+    
+            if (cost != 0) {
+                actionList.push({
+                    type: action,
+                    cost,
+                    timestamp: new Date()
+                    
+                });
+    
+                momentList.push({
+                    type: action,
+                    cost,
+                    timestamp : new Date()
+
+                });
+            }
+    
+            for (let i = 0; i < momentList.length; i++) {
+                let timestamp = moment(actionList[i].timestamp).format('YYYY-MM-DD hh:mm:ss a');
+                momentList[i].timestamp = (moment(timestamp, 'YYYY-MM-DD hh:mm:ss a').fromNow());
+                
+            }
+        }
     }
 
+
     function actions() {
-        return actionList;
+        return momentList;
     }
 
     function actionsFor(type) {
         const filteredActions = [];
 
 
-        for (let index = 0; index < actionList.length; index++) {
-            const action = actionList[index];
+        for (let index = 0; index < momentList.length; index++) {
+            const action = momentList[index];
 
             if (action.type === type) {
 
