@@ -4,7 +4,7 @@ const exphbs  = require('express-handlebars');
 const bodyParser = require('body-parser');
 
 const settingsBill =require("./settings-bill");
-//const settingsBill = require('./settings-bill');
+//const settingsBill = require('./settings-biljjl');
 const settingsBillApp = settingsBill();
 
 const handlebarSetup = exphbs({
